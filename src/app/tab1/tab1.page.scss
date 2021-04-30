@@ -101,6 +101,14 @@ ion-content {
     position: absolute;
 }
 
+.image-overlay {
+    z-index: 1;
+    position: absolute;
+    left: 0%;
+    top: 100px;
+    height: 233px
+}
+
 #close {
     position: absolute;
     top: 30px;

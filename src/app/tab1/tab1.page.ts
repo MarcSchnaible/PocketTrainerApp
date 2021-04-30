@@ -15,9 +15,11 @@ import '@capacitor-community/camera-preview'
 })
 export class Tab1Page implements OnInit {
   model = null;
-  //image = null;
+  image = null;
   cameraActive = false;
   intervall: any;
+
+  @ViewChild('imageView') imageT; 
 
   constructor() {}
 
@@ -27,12 +29,20 @@ export class Tab1Page implements OnInit {
 
   //load the TensorflowModel PoseNet
   async loadModel() {
-    this.model = await posenet.load();
+    this.model = await posenet.load({
+      architecture: 'MobileNetV1',
+      outputStride: 16,
+      inputResolution: { width: 414, height: 233 },
+      multiplier: 0.75
+    });
   }
 
   //detect the joints in image. Gives back a json with the coordinates 
   async detect(image) {
-    const pose = await this.model.estimateSinglePose(image);
+    //console.log(image);
+    const pose = await this.model.estimateSinglePose(this.imageT.nativeElement.value, {
+      flipHorizontal: false
+    });
     console.log(pose);
   }
 
@@ -48,7 +58,7 @@ export class Tab1Page implements OnInit {
 
     //starts a interval every 100ms
     this.intervall = setInterval(() => {
-      this.detect(this.takePicture());
+      this.takePicture();
     }, 100);
   }
 
@@ -62,12 +72,14 @@ export class Tab1Page implements OnInit {
   // take a picture
   async takePicture() {
     const cameraPreviewPictureOptions: CameraPreviewPictureOptions = {
-      quality: 50
+      quality: 90
     };
 
     const result = await CameraPreview.capture(cameraPreviewPictureOptions);
+    this.image = `data:image/jpeg;base64,${result.value}`;
     const base64PictureData = result.value;
-    console.log(base64PictureData);
-    return base64PictureData;
+    if (base64PictureData != 'data:,'){
+      this.detect(base64PictureData);
+    }
   }
 }
