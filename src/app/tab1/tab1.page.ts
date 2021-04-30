@@ -40,7 +40,7 @@ export class Tab1Page implements OnInit {
   //detect the joints in image. Gives back a json with the coordinates 
   async detect(image) {
     //console.log(image);
-    const pose = await this.model.estimateSinglePose(this.imageT.nativeElement.value, {
+    const pose = await this.model.estimateSinglePose(document.getElementById('image'), {
       flipHorizontal: false
     });
     console.log(pose);

@@ -30,7 +30,7 @@
     </div>
   </div>
 
-  <img width="414" height="233" [src]="image" *ngIf="image && cameraActive" class="image-overlay" #imageView>
+  <img id="image" style="height:233px"[src]="image" *ngIf="image && cameraActive" class="image-overlay" #imageView>
   <div id="cameraPreview" class="cameraPreview">
     <div *ngIf="cameraActive">
       <ion-button (click)="stopCamera()" id="close">
