@@ -105,23 +105,23 @@ ion-content {
     z-index: 12;
     position: absolute;
     left: 0%;
-    top: 25%;
+    top: 0%;
 }
 
 .canvas-overlay {
     z-index: 13;
     position: absolute;
     left: 0%;
-    top: 25%;
+    top: 0%;
 }
 
 #close {
     position: absolute;
     top: 30px;
-    left: calc(50% - 175px);
+    left: 30px;
     width: 50px;
     height: 50px;
-    z-index: 11;
+    z-index: 14;
 }
 
 #close::part(native) {
