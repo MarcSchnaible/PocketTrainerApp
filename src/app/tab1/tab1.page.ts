@@ -1,9 +1,10 @@
-import { Component, OnInit, ViewChild } from '@angular/core';
+import { Component, ElementRef, OnInit, ViewChild } from '@angular/core';
 import { Plugins } from "@capacitor/core"
 const { CameraPreview } = Plugins;
 import { CameraPreviewOptions, CameraPreviewPictureOptions } from '@capacitor-community/camera-preview';
 import * as posenet from '@tensorflow-models/posenet';
 import * as tf from '@tensorflow/tfjs';
+import {drawKeypoints, drawSkeleton} from './drawing.service';
 
 
 import '@capacitor-community/camera-preview'
@@ -17,9 +18,9 @@ export class Tab1Page implements OnInit {
   model = null;
   image = null;
   cameraActive = false;
-  intervall: any;
+  intervallRef: any;
 
-  @ViewChild('imageView') imageT; 
+  @ViewChild('canvas', { static: true }) canvas: ElementRef<HTMLCanvasElement>;
 
   constructor() {}
 
@@ -37,15 +38,6 @@ export class Tab1Page implements OnInit {
     });
   }
 
-  //detect the joints in image. Gives back a json with the coordinates 
-  async detect(image) {
-    //console.log(image);
-    const pose = await this.model.estimateSinglePose(document.getElementById('image'), {
-      flipHorizontal: false
-    });
-    console.log(pose);
-  }
-
   //opens the front camera
   openCamera() {
     const cameraPreviewOptions: CameraPreviewOptions = {
@@ -56,17 +48,10 @@ export class Tab1Page implements OnInit {
     CameraPreview.start(cameraPreviewOptions);
     this.cameraActive = true;
 
-    //starts a interval every 100ms
-    this.intervall = setInterval(() => {
-      this.takePicture();
-    }, 100);
-  }
-
-  //stop the cameraPreview
-  async stopCamera() {
-    await CameraPreview.stop();
-    clearInterval(this.intervall)
-    this.cameraActive = false;
+    //starts a interval every 50ms after 3s
+      this.intervallRef = setInterval(() => {
+        this.takePicture();
+      }, 50);
   }
 
   // take a picture
@@ -81,5 +66,35 @@ export class Tab1Page implements OnInit {
     if (base64PictureData != 'data:,'){
       this.detect(base64PictureData);
     }
+  }
+
+  //detect the joints in image. Gives back a json with the coordinates 
+  async detect(image) {
+    const pose = await this.model.estimateSinglePose(document.getElementById('image'), {
+      flipHorizontal: false
+    });
+    const imageWidth = document.getElementById('image').clientWidth;
+    const imageHeight = document.getElementById('image').clientHeight;
+    this.drawCanvas(pose, this.image, imageWidth, imageHeight);
+  }
+
+  //draw Canvas
+  drawCanvas(pose, image, imageWidth, imageHeight) {
+    //const ctx = this.canvas.nativeElement.getContext('2d');
+    var canvas = <HTMLCanvasElement> document.getElementById("canvas");
+    var ctx = canvas.getContext("2d");
+    
+    ctx.canvas.width = imageWidth;
+    ctx.canvas.height = imageHeight;
+
+    drawKeypoints(pose["keypoints"], 0.6, ctx);
+    drawSkeleton(pose["keypoints"], 0.7, ctx);
+  }
+
+  //stop the cameraPreview
+  async stopCamera() {
+    await CameraPreview.stop();
+    clearInterval(this.intervallRef)
+    this.cameraActive = false;
   }
 }
