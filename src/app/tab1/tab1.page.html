@@ -36,6 +36,9 @@
   <video autoplay muted loop id="myVideo" *ngIf="cameraActive">
     <source src="../../assets/videos/Yoga - 1059.mp4" type="video/mp4">
   </video>
+
+  <div class="blackBackground" *ngIf="cameraActive"></div>
+
   <div id="cameraPreview" class="cameraPreview">
     <div *ngIf="cameraActive">
       <ion-button (click)="stopCamera()" id="close">

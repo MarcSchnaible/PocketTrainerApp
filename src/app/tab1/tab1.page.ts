@@ -67,7 +67,7 @@ export class Tab1Page implements OnInit {
   intervall(){
     this.intervallRef = setInterval(() => {
       this.takePicture();
-    }, 250);
+    }, 100);
   }
 
   // take a picture
