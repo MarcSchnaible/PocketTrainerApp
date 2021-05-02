@@ -30,12 +30,24 @@ export class Tab1Page implements OnInit {
 
   //load the TensorflowModel PoseNet
   async loadModel() {
+
+    // genaues Model aber sehr langsam
+    this.model = await posenet.load({
+      architecture: 'ResNet50',
+      outputStride: 32,
+      inputResolution: { width: window.innerWidth, height: (window.innerWidth/1.77682403)},
+      quantBytes: 2
+    });
+
+    //ungenaues Model aber schnell...
+    /*
     this.model = await posenet.load({
       architecture: 'MobileNetV1',
       outputStride: 16,
-      inputResolution: { width: 414, height: 233 },
+      inputResolution: { width: window.innerWidth, height: (window.innerWidth/1.77682403)},
       multiplier: 0.75
     });
+    */
   }
 
   //opens the front camera
@@ -49,9 +61,13 @@ export class Tab1Page implements OnInit {
     this.cameraActive = true;
 
     //starts a interval every 50ms after 3s
-      this.intervallRef = setInterval(() => {
-        this.takePicture();
-      }, 50);
+      setTimeout(()=> {this.intervall()},4000);
+  }
+
+  intervall(){
+    this.intervallRef = setInterval(() => {
+      this.takePicture();
+    }, 250);
   }
 
   // take a picture

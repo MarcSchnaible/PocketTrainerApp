@@ -19,7 +19,7 @@
  
  const color = 'aqua';
  const boundingBoxColor = 'red';
- const lineWidth = 2;
+ const lineWidth = 4;
  
  export const tryResNetButtonName = 'tryResNetButton';
  export const tryResNetButtonText = '[New] Try ResNet50';
@@ -80,7 +80,7 @@
  
  export function drawPoint(ctx, y, x, r, color) {
    ctx.beginPath();
-   ctx.arc(x, y, r, 0, 2 * Math.PI);
+   ctx.arc(x, y, r, 0, 4 * Math.PI);
    ctx.fillStyle = color;
    ctx.fill();
  }
