@@ -55,7 +55,8 @@ export class Tab1Page implements OnInit {
     const cameraPreviewOptions: CameraPreviewOptions = {
       position: 'front',
       parent: 'cameraPreview',
-      className: 'cameraPreview'
+      className: 'cameraPreview',
+      toBack: true
     };
     CameraPreview.start(cameraPreviewOptions);
     this.cameraActive = true;
@@ -110,7 +111,8 @@ export class Tab1Page implements OnInit {
   //stop the cameraPreview
   async stopCamera() {
     await CameraPreview.stop();
-    clearInterval(this.intervallRef)
+    clearInterval(this.intervallRef);
     this.cameraActive = false;
+    this.image = null;
   }
 }
