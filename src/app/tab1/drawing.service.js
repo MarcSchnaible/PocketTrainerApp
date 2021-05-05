@@ -17,7 +17,7 @@
  import * as posenet from '@tensorflow-models/posenet';
  import * as tf from '@tensorflow/tfjs-core';
  
- const color = 'aqua';
+ var color = 'red'; //aqua
  const boundingBoxColor = 'red';
  const lineWidth = 4;
  
@@ -38,6 +38,13 @@
    return isAndroid() || isiOS();
  }
  
+ export function setColorFalse() {
+   color = 'red'
+ }
+
+ export function setColorTrue() {
+  color = 'aqua'
+}
  
  function setDatGuiPropertyCss(propertyText, liCssString, spanCssString = '') {
    var spans = document.getElementsByClassName('property-name');

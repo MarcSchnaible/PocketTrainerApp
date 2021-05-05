@@ -4,7 +4,7 @@ const { CameraPreview } = Plugins;
 import { CameraPreviewOptions, CameraPreviewPictureOptions } from '@capacitor-community/camera-preview';
 import * as posenet from '@tensorflow-models/posenet';
 import * as tf from '@tensorflow/tfjs';
-import {drawKeypoints, drawSkeleton} from './drawing.service';
+import {drawKeypoints, drawSkeleton, setColorFalse, setColorTrue} from './drawing.service';
 
 
 import '@capacitor-community/camera-preview'
@@ -92,7 +92,43 @@ export class Tab1Page implements OnInit {
     });
     const imageWidth = document.getElementById('image').clientWidth;
     const imageHeight = document.getElementById('image').clientHeight;
+
+    const keypoints = pose["keypoints"];
+    const rightShoulder = keypoints[6];
+    const rightElbow = keypoints[8];
+    const rightWrist = keypoints[10];
+    const rightShoulderPosition = rightShoulder["position"];
+    const yRightShoulder = rightShoulderPosition["y"];
+    const xRightShoulder = rightShoulderPosition["x"];
+    const rightElbowPosition = rightElbow["position"];
+    const yRightElbow = rightElbowPosition["y"];
+    const xRightElbow = rightElbowPosition["x"];
+    const rightWristPosition = rightWrist["position"];
+    const yRightWrist = rightWristPosition["y"];
+    const xRightWrist = rightWristPosition["x"];
+
+    const yUpperArm = yRightElbow - yRightShoulder;
+    const xUpperArm = xRightElbow - xRightShoulder;
+    //const UpperArm = {yUpperArm, xUpperArm};
+
+    const lengthUpperArm = (Math.sqrt((yUpperArm * yUpperArm) + (xUpperArm * xUpperArm)));
+
+    const yLowerArm = yRightWrist - yRightElbow;
+    const xLowerArm = xRightWrist - xRightElbow;
+    //const LowerArm = {yLowerArm, xLowerArm};
+
+    const lengthLowerArm = (Math.sqrt((yLowerArm * yLowerArm) + (xLowerArm * xLowerArm)));
+
+    const angle = (((yUpperArm * yLowerArm) + (xUpperArm * xLowerArm))/(lengthUpperArm * lengthLowerArm));
+
+    if(angle < 0.08 && angle > -0.08) {
+      setColorTrue();
+    } else {
+      setColorFalse();
+    }
+
     this.drawCanvas(pose, this.image, imageWidth, imageHeight);
+
   }
 
   //draw Canvas
