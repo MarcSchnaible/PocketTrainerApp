@@ -186,9 +186,10 @@ export class Tab1Page implements OnInit {
     const vectorPose_2 = this.poseToVector(pose2)
      
     let cosineSimilarity = similarity(vectorPose_1, vectorPose_2);
-    
+    /**
     let distance = 2 * (1 - cosineSimilarity);
-    return Math.sqrt(Math.abs(distance));
+    return Math.sqrt(Math.abs(distance)); */
+    return cosineSimilarity
   }
   
 }
