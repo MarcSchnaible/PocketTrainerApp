@@ -5,8 +5,7 @@ import { CameraPreviewOptions, CameraPreviewPictureOptions } from '@capacitor-co
 import * as posenet from '@tensorflow-models/posenet';
 import * as tf from '@tensorflow/tfjs';
 import {drawKeypoints, drawSkeleton, setColorFalse, setColorTrue} from './drawing.service';
-
-
+import similarity from 'calculate-cosine-similarity'
 import '@capacitor-community/camera-preview'
 
 @Component({
@@ -92,8 +91,9 @@ export class Tab1Page implements OnInit {
     });
     const imageWidth = document.getElementById('image').clientWidth;
     const imageHeight = document.getElementById('image').clientHeight;
-
+    
     const keypoints = pose["keypoints"];
+  
     const rightShoulder = keypoints[6];
     const rightElbow = keypoints[8];
     const rightWrist = keypoints[10];
@@ -120,7 +120,8 @@ export class Tab1Page implements OnInit {
     const lengthLowerArm = (Math.sqrt((yLowerArm * yLowerArm) + (xLowerArm * xLowerArm)));
 
     const angle = (((yUpperArm * yLowerArm) + (xUpperArm * xLowerArm))/(lengthUpperArm * lengthLowerArm));
-
+   
+    
     if(angle < 0.08 && angle > -0.08) {
       setColorTrue();
     } else {
@@ -151,4 +152,44 @@ export class Tab1Page implements OnInit {
     this.cameraActive = false;
     this.image = null;
   }
+
+  /**
+   * Transform the pose into a vector of points from the keypoints
+   * @param pose - the pose from posenet
+   * @returns - vector of points
+   */
+  poseToVector(pose){
+    const keypoints = pose["keypoints"];
+    var vectorPose = []
+    for(let key of keypoints){
+      const position = key["position"]
+      
+      const x = position["x"]
+      const y = position["y"]
+      
+      vectorPose.push(x)
+      vectorPose.push(y)
+
+    }
+    return vectorPose
+  }
+
+  /**
+   * Compare to poses using the similarity of the cosine and calculate the distance
+   * @param pose1 - the pose from the user 
+   * @param pose2 - the pose from the coach
+   * @returns - distance between two poses using the cosine simularity
+   */
+  compareTwoPoses(pose1, pose2){
+
+    const vectorPose_1 = this.poseToVector(pose1)
+    const vectorPose_2 = this.poseToVector(pose2)
+     
+    let cosineSimilarity = similarity(vectorPose_1, vectorPose_2);
+    
+    let distance = 2 * (1 - cosineSimilarity);
+    return Math.sqrt(Math.abs(distance));
+  }
+  
 }
+
