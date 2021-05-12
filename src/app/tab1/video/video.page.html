@@ -1,0 +1,18 @@
+<ion-content>
+  <div id="cameraPreview" class="cameraPreview">
+    <div *ngIf="cameraActive">
+      <ion-button (click)="stopCamera()" id="close">
+        <ion-icon name="close-outline"></ion-icon>
+      </ion-button>
+    </div>
+  </div>
+
+  <img id="image" [style]="cssProberty" [src]="image" *ngIf="image && cameraActive" class="image-overlay" #imageView>
+  <canvas id="canvas" [style]="cssProberty" #canvas class="canvas-overlay" *ngIf="image && cameraActive"></canvas>
+
+  <video autoplay muted loop id="myVideo" *ngIf="cameraActive" webkit-playsinline playsinline>
+    <source src="../../assets/videos/Yoga.mp4" type="video/mp4">
+  </video>
+
+  <div class="blackBackground" *ngIf="cameraActive"></div>
+</ion-content>

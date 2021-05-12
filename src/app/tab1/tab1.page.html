@@ -1,36 +1,39 @@
-<ion-content [fullscreen]="true">
-  <div class="container" *ngIf="!cameraActive">
-    <div class="headline">
-      <h1 class="helloUserTitle">Guten Tag,<br />Max</h1>
-      <ion-icon class="searchIcon" name="search"></ion-icon>
-    </div>
-    <p class="videoHeadlinesFirst">Deine Trainings:</p>
-    <div class="video-container" (click)="openCamera()">
-      <div class="video-item-container">
-        <div class="videoPicture">
-          <ion-icon class="playButton" name="play"></ion-icon>
-        </div>
-        <p class="description">Sit-Ups 5:20min</p>
+<ion-content scroll-y="false">
+  <div class="splash">
+    <div class="container">
+      <div class="headline">
+        <h1 class="helloUserTitle">Guten Tag,<br />Max</h1>
+        <ion-icon class="searchIcon" name="search"></ion-icon>
       </div>
-      <div class="video-item-container">
-        <div class="videoPicture2">
-          <ion-icon class="playButton" name="play"></ion-icon>
+      <p class="videoHeadlinesFirst">Deine Trainings:</p>
+      <div class="video-container" (click)="playVideo()">
+        <div class="video-item-container">
+          <div class="videoPicture">
+            <ion-icon class="playButton" name="play"></ion-icon>
+          </div>
+          <p class="description">Sit-Ups 5:20min</p>
         </div>
-        <p class="description">Bauch Beine Po 10:35min</p>
+        <div class="video-item-container">
+          <div class="videoPicture2">
+            <ion-icon class="playButton" name="play"></ion-icon>
+          </div>
+          <p class="description">Bauch Beine Po 10:35min</p>
+        </div>
       </div>
-    </div>
-    <p class="videoHeadlines">Cardio:</p>
-    <div class="video-container">
-      <div class="video-item-container">
-        <div class="videoPicture3">
-          <ion-icon class="playButton" name="play"></ion-icon>
+      <p class="videoHeadlines">Cardio:</p>
+      <div class="video-container">
+        <div class="video-item-container">
+          <div class="videoPicture3">
+            <ion-icon class="playButton" name="play"></ion-icon>
+          </div>
+          <p class="description">Intervall Training 7:18min</p>
         </div>
-        <p class="description">Intervall Training 7:18min</p>
       </div>
     </div>
   </div>
 
-  <div id="cameraPreview" class="cameraPreview">
+  <!--
+    <div id="cameraPreview" class="cameraPreview">
     <div *ngIf="cameraActive">
       <ion-button (click)="stopCamera()" id="close">
         <ion-icon name="close-outline"></ion-icon>
@@ -38,16 +41,14 @@
     </div>
   </div>
 
-  <img id="image" style="width:100%"[src]="image" *ngIf="image && cameraActive" class="image-overlay" #imageView>
+  <img id="image" [style]="cssProberty" [src]="image" *ngIf="image && cameraActive" class="image-overlay" #imageView>
   <canvas id="canvas" #canvas class="canvas-overlay" *ngIf="image && cameraActive"></canvas>
 
-  <!--
-    <video autoplay muted loop id="myVideo" *ngIf="cameraActive">
-    <source src="../../assets/videos/Yoga - 1059.mp4" type="video/mp4">
+  <video autoplay muted loop id="myVideo" *ngIf="cameraActive" webkit-playsinline playsinline>
+    <source src="../../assets/videos/Yoga.mp4" type="video/mp4">
   </video>
+
+  <div class="blackBackground" *ngIf="cameraActive"></div>
   -->
 
-  <!--
-    <div class="blackBackground" *ngIf="cameraActive"></div>
-  -->
 </ion-content>
