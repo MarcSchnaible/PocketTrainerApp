@@ -21,6 +21,7 @@ export class VideoPage implements OnInit {
   cameraActive = false;
   intervallRef: any;
   cssProberty: any;
+  cssProbertyCloseButton: any;
   orientation: string
 
   @ViewChild('canvas', { static: true }) canvas: ElementRef<HTMLCanvasElement>;
@@ -47,8 +48,10 @@ export class VideoPage implements OnInit {
   setCssProberty(){
     if(this.orientation == "portrait-primary"){
       this.cssProberty = 'max-height: ' + (window.innerWidth / 1.8962963) + 'px; top: ' + ((window.innerHeight / 2) - ((window.innerWidth / 1.8962963) / 2)) + 'px; left';
+      this.cssProbertyCloseButton = 'left: 30px; top: 45px;'
     } else {
       this.cssProberty = 'max-height: ' + window.innerHeight + 'px; top: 0px';
+      this.cssProbertyCloseButton = 'left: 75px; top: 20px;'
     }
     
   }

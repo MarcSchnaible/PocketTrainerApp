@@ -1,7 +1,7 @@
 <ion-content>
   <div id="cameraPreview" class="cameraPreview">
     <div *ngIf="cameraActive">
-      <ion-button (click)="stopCamera()" id="close">
+      <ion-button [style]="cssProbertyCloseButton" (click)="stopCamera()" id="close">
         <ion-icon name="close-outline"></ion-icon>
       </ion-button>
     </div>
