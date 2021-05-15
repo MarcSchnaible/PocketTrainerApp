@@ -78,8 +78,8 @@ class BodyAnatomie{
     private poseToVector(bodyKeyPoints, bodyPartKeyPoints){
         var vectorPose = [];
         for(let key of bodyPartKeyPoints){
-          const position = bodyKeyPoints[key];
-          
+          const bodyPart = bodyKeyPoints[key];
+          const position = bodyPart["position"];
           const x = position["x"];
           const y = position["y"];
           
