@@ -6,5 +6,9 @@
     <param name="android-package" value="cordova.plugins.screenorientation.CDVOrientation"/>
   </feature>
 
+  <feature name="VideoCapturePlus">
+    <param name="android-package" value="nl.xservices.plugins.videocaptureplus.VideoCapturePlus"/>
+  </feature>
+
   
 </widget>

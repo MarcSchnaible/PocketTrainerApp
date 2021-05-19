@@ -6,5 +6,9 @@
     <param name="ios-package" value="CDVOrientation"/>
   </feature>
 
+  <feature name="VideoCapturePlus">
+    <param name="ios-package" value="VideoCapturePlus"/>
+  </feature>
+
   
 </widget>

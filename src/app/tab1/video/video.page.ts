@@ -29,8 +29,7 @@ export class VideoPage implements OnInit {
   constructor(
     private router: Router,
     private screenOrientation: ScreenOrientation
-  ) { 
-  }
+  ) { }
 
   ngOnInit() {
     this.orientation = this.screenOrientation.type;
@@ -62,8 +61,8 @@ export class VideoPage implements OnInit {
     // genaues Model aber sehr langsam
     this.model = await posenet.load({
       architecture: 'ResNet50',
-      outputStride: 32,
-      inputResolution: { width: window.innerWidth, height: (window.innerWidth/1.8962963)},
+      outputStride: 16,
+      inputResolution: { width: 257, height: 200},
       quantBytes: 2
     });
 
@@ -72,8 +71,8 @@ export class VideoPage implements OnInit {
     this.model = await posenet.load({
       architecture: 'MobileNetV1',
       outputStride: 16,
-      inputResolution: { width: window.innerWidth, height: (window.innerWidth/1.77682403)},
-      multiplier: 0.75
+      inputResolution: { width: 640, height: 480},
+      multiplier: 0.5
     });
     */
   }
@@ -89,8 +88,7 @@ export class VideoPage implements OnInit {
     CameraPreview.start(cameraPreviewOptions);
     this.cameraActive = true;
 
-    //starts a interval every 50ms after 3s
-    //  setTimeout(()=> {this.intervall()},0);
+    //starts a interval
     this.intervall()
   }
 
