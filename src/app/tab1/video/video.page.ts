@@ -1,4 +1,4 @@
-import { Component, ElementRef, OnInit, ViewChild } from '@angular/core';
+import { Component, ElementRef, OnInit, ViewChild} from '@angular/core';
 import { Plugins } from "@capacitor/core"
 const { CameraPreview } = Plugins;
 import { CameraPreviewOptions, CameraPreviewPictureOptions } from '@capacitor-community/camera-preview';
@@ -8,7 +8,7 @@ import similarity from 'calculate-cosine-similarity';
 import '@capacitor-community/camera-preview';
 import { Router } from '@angular/router';
 import { ScreenOrientation } from '@ionic-native/screen-orientation/ngx';
-
+import {BodyAnatomie} from './classes/BodyAnatomie';
 @Component({
   selector: 'app-video',
   templateUrl: './video.page.html',
@@ -117,9 +117,13 @@ export class VideoPage implements OnInit {
     const pose = await this.model.estimateSinglePose(document.getElementById('image'), {
       flipHorizontal: false
     });
+    const bodyAnatomie = new BodyAnatomie(pose);
+    const rightArm = bodyAnatomie.getRightArmVector;
+    console.log(rightArm);
+    
     const imageWidth = document.getElementById('image').clientWidth;
     const imageHeight = document.getElementById('image').clientHeight;
-    
+
     const keypoints = pose["keypoints"];
   
     const rightShoulder = keypoints[6];
@@ -181,44 +185,4 @@ export class VideoPage implements OnInit {
     this.image = null;
     this.router.navigate(['/']);
   }
-
-  /**
-   * Transform the pose into a vector of points from the keypoints
-   * @param pose - the pose from posenet
-   * @returns - vector of points
-   */
-  poseToVector(pose){
-    const keypoints = pose["keypoints"];
-    var vectorPose = []
-    for(let key of keypoints){
-      const position = key["position"]
-      
-      const x = position["x"]
-      const y = position["y"]
-      
-      vectorPose.push(x)
-      vectorPose.push(y)
-
-    }
-    return vectorPose
-  }
-
-  /**
-   * Compare to poses using the similarity of the cosine and calculate the distance
-   * @param pose1 - the pose from the user 
-   * @param pose2 - the pose from the coach
-   * @returns - distance between two poses using the cosine simularity
-   */
-  compareTwoPoses(pose1, pose2){
-
-    const vectorPose_1 = this.poseToVector(pose1)
-    const vectorPose_2 = this.poseToVector(pose2)
-     
-    let cosineSimilarity = similarity(vectorPose_1, vectorPose_2);
-    /**
-    let distance = 2 * (1 - cosineSimilarity);
-    return Math.sqrt(Math.abs(distance)); */
-    return cosineSimilarity
-  }
-
 }
