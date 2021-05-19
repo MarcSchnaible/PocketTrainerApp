@@ -10,6 +10,7 @@ import { ActivatedRoute, Router } from '@angular/router';
 import { ScreenOrientation } from '@ionic-native/screen-orientation/ngx';
 import {BodyAnatomie} from './classes/BodyAnatomie';
 import { ComparePoseService } from './classes/comparePoseService';
+import { DataServiceSquad } from './classes/data/dataServiceSquad';
 
 
 @Component({
@@ -28,6 +29,7 @@ export class VideoPage implements OnInit{
   videoSource: string;
   orientation: string;
   video: string;
+  durchlauf = 1;
 
   @ViewChild('canvas', { static: true }) canvas: ElementRef<HTMLCanvasElement>;
 
@@ -35,7 +37,8 @@ export class VideoPage implements OnInit{
     private router: Router,
     private activatedRout: ActivatedRoute,
     private screenOrientation: ScreenOrientation,
-    private comparePoseService: ComparePoseService
+    private comparePoseService: ComparePoseService,
+    private dataServiceSquad: DataServiceSquad
   ) { }
 
   ngOnInit() {
@@ -141,10 +144,24 @@ export class VideoPage implements OnInit{
     const rightArm = bodyAnatomie.getRightArmVector;
     console.log(rightArm);
     */
+    if(this.durchlauf == 1){
+      if (this.comparePoseService.compareTwoPoses(pose,this.dataServiceSquad.getPose(1))) {
+        this.durchlauf = 2;
+        let vid = <HTMLVideoElement>document.getElementById("myVideo");
+        vid.play();
+        setTimeout(() => {
+          let vid = <HTMLVideoElement>document.getElementById("myVideo");
+          vid.pause();
+        },750);
+      }
+    }
 
-    if (this.comparePoseService.compareTwoPoses(pose,this.comparePoseService.getPose())) {
-      let vid = <HTMLVideoElement>document.getElementById("myVideo");
-      vid.play();
+    if(this.durchlauf == 2) {
+      if (this.comparePoseService.compareTwoPosesOnlyLegs(pose,this.dataServiceSquad.getPose(2))) {
+        this.durchlauf = 3;
+        let vid = <HTMLVideoElement>document.getElementById("myVideo");
+        vid.play();
+      }
     }
 
     const imageWidth = document.getElementById('image').clientWidth;

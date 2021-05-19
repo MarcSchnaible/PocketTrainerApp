@@ -40,6 +40,23 @@ import { Injectable } from "@angular/core";
       return same;
     }
 
+    compareTwoPosesOnlyLegs(pose1: any, pose2: any) {
+      var same = false
+      const keypoints1 = pose1["keypoints"];
+      const keypoints2 = pose2["keypoints"];
+
+      if(this.compare(keypoints1,keypoints2,this.rightUpperLeg)){
+        if(this.compare(keypoints1,keypoints2,this.leftUpperLeg)){
+          if(this.compare(keypoints1,keypoints2,this.rightLowerLeg)){
+            if(this.compare(keypoints1,keypoints2,this.leftLowerLeg)){
+              same = true;
+            }
+          }
+        }
+      }
+      return same;
+    }
+
     getVector(keypoints: any, points: any) {
       const xfirstPoint = keypoints[points[0]]["position"]["x"];
       const yfirstPoint = keypoints[points[0]]["position"]["y"];
@@ -76,10 +93,18 @@ import { Injectable } from "@angular/core";
 
     writePose(pose: any) {
       this.pose = pose;
+      this.saveText(JSON.stringify(pose), "pose1.json");
     }
 
     getPose() {
       return this.pose;
+    }
+
+    saveText(text, filename){
+      var a = document.createElement('a');
+      a.setAttribute('href', 'data:text/plain;charset=utf-u,'+encodeURIComponent(text));
+      a.setAttribute('download', filename);
+      a.click()
     }
 
   }

@@ -29,6 +29,14 @@
     transform: translateX(-50%);
 }
 
+.dialog {
+    z-index: 15;
+    position: absolute;
+    top: 120px;
+    color: black;
+    left: 10px;
+}
+
 #myVideo {
     z-index: 13;
     position: absolute;
