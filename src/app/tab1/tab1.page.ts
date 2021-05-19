@@ -12,8 +12,8 @@ export class Tab1Page implements OnInit {
 
   ngOnInit() {}
 
-  playVideo(){
-    this.router.navigate(['video'])
+  playVideo(video: string){
+    this.router.navigate(['video', video]);
   }
 }
 

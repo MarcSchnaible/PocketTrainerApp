@@ -1,4 +1,4 @@
-import { Component, ElementRef, OnInit, ViewChild} from '@angular/core';
+import { Component, ElementRef, OnInit, ViewChild, AfterViewInit} from '@angular/core';
 import { Plugins } from "@capacitor/core"
 const { CameraPreview } = Plugins;
 import { CameraPreviewOptions, CameraPreviewPictureOptions } from '@capacitor-community/camera-preview';
@@ -6,15 +6,17 @@ import * as posenet from '@tensorflow-models/posenet';
 import {drawKeypoints, drawSkeleton, setColorFalse, setColorTrue} from '../drawing.service';
 import similarity from 'calculate-cosine-similarity';
 import '@capacitor-community/camera-preview';
-import { Router } from '@angular/router';
+import { ActivatedRoute, Router } from '@angular/router';
 import { ScreenOrientation } from '@ionic-native/screen-orientation/ngx';
 import {BodyAnatomie} from './classes/BodyAnatomie';
+
+
 @Component({
   selector: 'app-video',
   templateUrl: './video.page.html',
   styleUrls: ['./video.page.scss'],
 })
-export class VideoPage implements OnInit {
+export class VideoPage implements OnInit{
 
   model = null;
   image = null;
@@ -22,16 +24,26 @@ export class VideoPage implements OnInit {
   intervallRef: any;
   cssProberty: any;
   cssProbertyCloseButton: any;
-  orientation: string
+  videoSource: string;
+  orientation: string;
+  video: string;
 
   @ViewChild('canvas', { static: true }) canvas: ElementRef<HTMLCanvasElement>;
 
   constructor(
     private router: Router,
+    private activatedRout: ActivatedRoute,
     private screenOrientation: ScreenOrientation
   ) { }
 
   ngOnInit() {
+    this.video = this.activatedRout.snapshot.params['video'];
+    if(this.video == 'yoga') {
+      this.videoSource = "../../assets/videos/Yoga.mp4"
+    }
+    if(this.video == 'squad') {
+      this.videoSource = "../../assets/videos/Squad.mp4"
+    }
     this.orientation = this.screenOrientation.type;
     this.screenOrientation.onChange().subscribe(
       () => {
@@ -46,7 +58,7 @@ export class VideoPage implements OnInit {
 
   setCssProberty(){
     if(this.orientation == "portrait-primary"){
-      this.cssProberty = 'max-height: ' + (window.innerWidth / 1.8962963) + 'px; top: ' + ((window.innerHeight / 2) - ((window.innerWidth / 1.8962963) / 2)) + 'px; left';
+      this.cssProberty = 'max-height: ' + (window.innerHeight) + 'px; top: ' + (0) + 'px;'; //'max-height: ' + (window.innerWidth / 1.8962963) + 'px; top: ' + ((window.innerHeight / 2) - ((window.innerWidth / 1.8962963) / 2)) + 'px;
       this.cssProbertyCloseButton = 'left: 30px; top: 45px;'
     } else {
       this.cssProberty = 'max-height: ' + window.innerHeight + 'px; top: 0px';
@@ -59,22 +71,22 @@ export class VideoPage implements OnInit {
   async loadModel() {
 
     // genaues Model aber sehr langsam
+    /*
     this.model = await posenet.load({
       architecture: 'ResNet50',
       outputStride: 16,
       inputResolution: { width: 257, height: 200},
       quantBytes: 2
     });
+    */
 
     //ungenaues Model aber schnell...
-    /*
     this.model = await posenet.load({
       architecture: 'MobileNetV1',
       outputStride: 16,
-      inputResolution: { width: 640, height: 480},
+      inputResolution: { width: 257, height: 200},
       multiplier: 0.5
     });
-    */
   }
 
   //opens the front camera

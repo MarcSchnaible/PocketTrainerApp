@@ -6,7 +6,7 @@
 }
 
 .blackBackground{
-    z-index: 11;
+    z-index: 12;
     position: absolute;
     left: 0%;
     top: 0%;
@@ -16,7 +16,7 @@
 }
 
 .image-overlay {
-    z-index: 12;
+    z-index: 11;
     position: absolute;
     left: 50%;
     transform: translateX(-50%);

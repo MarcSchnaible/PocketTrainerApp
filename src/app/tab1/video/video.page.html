@@ -11,7 +11,7 @@
   <canvas id="canvas" [style]="cssProberty" #canvas class="canvas-overlay" *ngIf="image && cameraActive"></canvas>
 
   <video autoplay muted loop id="myVideo" *ngIf="cameraActive" webkit-playsinline playsinline>
-    <source src="../../assets/videos/Yoga.mp4" type="video/mp4">
+    <source src="{{videoSource}}" type="video/mp4">
   </video>
 
   <div class="blackBackground" *ngIf="cameraActive"></div>
