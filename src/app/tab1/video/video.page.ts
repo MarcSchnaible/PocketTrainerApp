@@ -9,6 +9,7 @@ import '@capacitor-community/camera-preview';
 import { ActivatedRoute, Router } from '@angular/router';
 import { ScreenOrientation } from '@ionic-native/screen-orientation/ngx';
 import {BodyAnatomie} from './classes/BodyAnatomie';
+import { ComparePoseService } from './classes/comparePoseService';
 
 
 @Component({
@@ -33,7 +34,8 @@ export class VideoPage implements OnInit{
   constructor(
     private router: Router,
     private activatedRout: ActivatedRoute,
-    private screenOrientation: ScreenOrientation
+    private screenOrientation: ScreenOrientation,
+    private comparePoseService: ComparePoseService
   ) { }
 
   ngOnInit() {
@@ -53,7 +55,11 @@ export class VideoPage implements OnInit{
    );
     this.loadModel();
     this.setCssProberty();
-    this.openCamera()
+    this.openCamera();
+    setTimeout(() => {
+      let vid = <HTMLVideoElement>document.getElementById("myVideo");
+      vid.pause();
+    }, 1500);
   }
 
   setCssProberty(){
@@ -129,51 +135,22 @@ export class VideoPage implements OnInit{
     const pose = await this.model.estimateSinglePose(document.getElementById('image'), {
       flipHorizontal: false
     });
+
+    /*
     const bodyAnatomie = new BodyAnatomie(pose);
     const rightArm = bodyAnatomie.getRightArmVector;
     console.log(rightArm);
-    
+    */
+
+    if (this.comparePoseService.compareTwoPoses(pose,this.comparePoseService.getPose())) {
+      let vid = <HTMLVideoElement>document.getElementById("myVideo");
+      vid.play();
+    }
+
     const imageWidth = document.getElementById('image').clientWidth;
     const imageHeight = document.getElementById('image').clientHeight;
 
-    const keypoints = pose["keypoints"];
-  
-    const rightShoulder = keypoints[6];
-    const rightElbow = keypoints[8];
-    const rightWrist = keypoints[10];
-    const rightShoulderPosition = rightShoulder["position"];
-    const yRightShoulder = rightShoulderPosition["y"];
-    const xRightShoulder = rightShoulderPosition["x"];
-    const rightElbowPosition = rightElbow["position"];
-    const yRightElbow = rightElbowPosition["y"];
-    const xRightElbow = rightElbowPosition["x"];
-    const rightWristPosition = rightWrist["position"];
-    const yRightWrist = rightWristPosition["y"];
-    const xRightWrist = rightWristPosition["x"];
-
-    const yUpperArm = yRightElbow - yRightShoulder;
-    const xUpperArm = xRightElbow - xRightShoulder;
-    //const UpperArm = {yUpperArm, xUpperArm};
-
-    const lengthUpperArm = (Math.sqrt((yUpperArm * yUpperArm) + (xUpperArm * xUpperArm)));
-
-    const yLowerArm = yRightWrist - yRightElbow;
-    const xLowerArm = xRightWrist - xRightElbow;
-    //const LowerArm = {yLowerArm, xLowerArm};
-
-    const lengthLowerArm = (Math.sqrt((yLowerArm * yLowerArm) + (xLowerArm * xLowerArm)));
-
-    const angle = (((yUpperArm * yLowerArm) + (xUpperArm * xLowerArm))/(lengthUpperArm * lengthLowerArm));
-   
-    
-    if(angle < 0.08 && angle > -0.08) {
-      setColorTrue();
-    } else {
-      setColorFalse();
-    }
-
     this.drawCanvas(pose, this.image, imageWidth, imageHeight);
-
   }
 
   //draw Canvas

@@ -2,19 +2,16 @@ ion-content {
     --background: url("../../assets/backgrounds/BackgroundMan.jpg") no-repeat center center / cover;
 }
 
-#myVideo {
+.image-overlay {
     z-index: 13;
     position: absolute;
-    left: 0%;
-    top: 0%;
-    margin: 0px;
-    padding: 0px;
-    width: 100%;
+    left: 50%;
+    transform: translateX(-50%);
 }
 
 .canvas-overlay {
     z-index: 14;
     position: absolute;
-    left: 0%;
-    top: 0%;
+    left: 50%;
+    transform: translateX(-50%);
 }

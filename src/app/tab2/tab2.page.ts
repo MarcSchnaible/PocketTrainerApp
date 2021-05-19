@@ -1,7 +1,8 @@
 import { Component, OnInit} from '@angular/core';
-
-import { VideoCapturePlus, VideoCapturePlusOptions, MediaFile } from '@ionic-native/video-capture-plus/ngx';
-import { Platform } from '@ionic/angular'; 
+import * as posenet from '@tensorflow-models/posenet';
+import {drawKeypoints, drawSkeleton, setColorFalse, setColorTrue} from '../tab1/drawing.service';
+import { BodyAnatomie } from '../tab1/video/classes/BodyAnatomie';
+import { ComparePoseService } from '../tab1/video/classes/comparePoseService';
 
 @Component({
   selector: 'app-tab2',
@@ -9,32 +10,78 @@ import { Platform } from '@ionic/angular';
   styleUrls: ['tab2.page.scss']
 })
 export class Tab2Page implements OnInit {
-
-  browser = false;
   
-  constructor(
-    private videoCapturePlus: VideoCapturePlus,
-    public platform: Platform
-  ) {}
+  model = null;
+  intervallRef: any;
+
+  constructor(private comparePoseService: ComparePoseService) {}
 
   ngOnInit() {
-    if (this.platform.is('capacitor') || this.platform.is('cordova')) {
-      this.browser = false;
-      this.doMediaCapture();
-    } else {
-      console.log("This function is not available in the browser. Please start the app on a mobile device.");
-      this.browser = true;
-    }
+    this.loadModel();
+    this.intervall();
+    setTimeout(()=> {
+      clearInterval(this.intervallRef);
+    }, 60000)
   }
 
-  async doMediaCapture() {
-    const options: VideoCapturePlusOptions = {
-      limit: 1,
-      highquality: true,
-      frontcamera: true,
-      portraitOverlay: "src/assets/icon/favicon.png"
-    };
-    let capture: any = await this.videoCapturePlus.captureVideo(options);
-    console.log((capture[0] as MediaFile).fullPath);
+  //load the TensorflowModel PoseNet
+  async loadModel() {
+
+    // genaues Model aber sehr langsam
+    this.model = await posenet.load({
+      architecture: 'ResNet50',
+      outputStride: 32,
+      inputResolution: { width: 375, height: 750},
+      quantBytes: 2
+    });
+
+    /*
+    //ungenaues Model aber schnell...
+    this.model = await posenet.load({
+      architecture: 'MobileNetV1',
+      outputStride: 16,
+      inputResolution: { width: 257, height: 200},
+      multiplier: 0.5
+    });
+    */
+  }
+
+  intervall(){
+    this.intervallRef = setInterval(() => {
+      this.detect();
+    }, 3000);
+  }
+
+  async detect() {
+    const pose = await this.model.estimateSinglePose(document.getElementById('imageUpload'), {
+      flipHorizontal: false
+    });
+
+    this.comparePoseService.writePose(pose);
+    
+    const imageWidth = document.getElementById('imageUpload').clientWidth;
+    const imageHeight = document.getElementById('imageUpload').clientHeight;
+
+    /*
+    const bodyAnatomie = new BodyAnatomie(pose);
+    const rightArm = bodyAnatomie.getRightArmVector;
+    const leftArm = bodyAnatomie.getLeftArmVector;
+    console.log(bodyAnatomie.compareTwoPoses(rightArm,leftArm));
+    */
+
+    this.drawCanvas(pose, imageWidth, imageHeight);
+  }
+
+  //draw Canvas
+  drawCanvas(pose, imageWidth, imageHeight) {
+    //const ctx = this.canvas.nativeElement.getContext('2d');
+    var canvas = <HTMLCanvasElement> document.getElementById("canvasUpload");
+    var ctx = canvas.getContext("2d");
+    
+    ctx.canvas.width = imageWidth;
+    ctx.canvas.height = imageHeight;
+
+    drawKeypoints(pose["keypoints"], 0.6, ctx);
+    drawSkeleton(pose["keypoints"], 0.7, ctx);
   }
 }
