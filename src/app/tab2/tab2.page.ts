@@ -1,7 +1,6 @@
 import { Component, OnInit} from '@angular/core';
 import * as posenet from '@tensorflow-models/posenet';
 import {drawKeypoints, drawSkeleton, setColorFalse, setColorTrue} from '../tab1/drawing.service';
-import { BodyAnatomie } from '../tab1/video/classes/BodyAnatomie';
 import { ComparePoseService } from '../tab1/video/classes/comparePoseService';
 
 @Component({
@@ -61,13 +60,6 @@ export class Tab2Page implements OnInit {
     
     const imageWidth = document.getElementById('imageUpload').clientWidth;
     const imageHeight = document.getElementById('imageUpload').clientHeight;
-
-    /*
-    const bodyAnatomie = new BodyAnatomie(pose);
-    const rightArm = bodyAnatomie.getRightArmVector;
-    const leftArm = bodyAnatomie.getLeftArmVector;
-    console.log(bodyAnatomie.compareTwoPoses(rightArm,leftArm));
-    */
 
     this.drawCanvas(pose, imageWidth, imageHeight);
   }
