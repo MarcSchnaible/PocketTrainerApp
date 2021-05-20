@@ -4,14 +4,11 @@ const { CameraPreview } = Plugins;
 import { CameraPreviewOptions, CameraPreviewPictureOptions } from '@capacitor-community/camera-preview';
 import * as posenet from '@tensorflow-models/posenet';
 import {drawKeypoints, drawSkeleton, setColorFalse, setColorTrue} from '../drawing.service';
-import similarity from 'calculate-cosine-similarity';
 import '@capacitor-community/camera-preview';
 import { ActivatedRoute, Router } from '@angular/router';
 import { ScreenOrientation } from '@ionic-native/screen-orientation/ngx';
-import {BodyAnatomie} from './classes/BodyAnatomie';
-import { ComparePoseService } from './classes/comparePoseService';
 import { DataServiceSquad } from './classes/data/dataServiceSquad';
-
+import { CompareService } from './classes/CompareService';
 
 @Component({
   selector: 'app-video',
@@ -37,7 +34,6 @@ export class VideoPage implements OnInit{
     private router: Router,
     private activatedRout: ActivatedRoute,
     private screenOrientation: ScreenOrientation,
-    private comparePoseService: ComparePoseService,
     private dataServiceSquad: DataServiceSquad
   ) { }
 
@@ -139,13 +135,11 @@ export class VideoPage implements OnInit{
       flipHorizontal: false
     });
 
-    /*
-    const bodyAnatomie = new BodyAnatomie(pose);
-    const rightArm = bodyAnatomie.getRightArmVector;
-    console.log(rightArm);
-    */
+    let userPose = pose;
     if(this.durchlauf == 1){
-      if (this.comparePoseService.compareTwoPoses(pose,this.dataServiceSquad.getPose(1))) {
+      let coachPose = this.dataServiceSquad.getPose(1);
+      let compareService = new CompareService(userPose, coachPose);
+      if (compareService.compareCompleteBody()) {
         this.durchlauf = 2;
         let vid = <HTMLVideoElement>document.getElementById("myVideo");
         vid.play();
@@ -157,7 +151,9 @@ export class VideoPage implements OnInit{
     }
 
     if(this.durchlauf == 2) {
-      if (this.comparePoseService.compareTwoPosesOnlyLegs(pose,this.dataServiceSquad.getPose(2))) {
+      let coachPose = this.dataServiceSquad.getPose(2);
+      let compareService = new CompareService(userPose, coachPose);
+      if (compareService.compareLegs()) {
         this.durchlauf = 3;
         let vid = <HTMLVideoElement>document.getElementById("myVideo");
         vid.play();
