@@ -43,6 +43,7 @@ export class VideoPage implements OnInit{
       this.videoSource = "../../assets/videos/Yoga.mp4"
     }
     if(this.video == 'squad') {
+      this.dataServiceSquad.initDataServiceSquad();
       this.videoSource = "../../assets/videos/Squad.mp4"
     }
     this.orientation = this.screenOrientation.type;
