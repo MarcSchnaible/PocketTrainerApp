@@ -113,25 +113,29 @@ import {PoseService} from "./PoseService";
      * Compare the two vectors of user and coach using the angle between them.
      * @param userPoseVectorPart  - Vector of the body part of the user
      * @param coachPoseVectorPart - Vector of the body part of the coach
-     * @returns true if they are the same, otherwise false
+     * @returns true if the angle is between some range, otherwise false
      */
     private compare(userPoseVectorPart: any, coachPoseVectorPart: any) {
-        var arePoseSame = false;
-        const xVector1 = userPoseVectorPart.xVector;
-        const yVector1 = userPoseVectorPart.yVector;
-        const xVector2 = coachPoseVectorPart.xVector;
-        const yVector2 = coachPoseVectorPart.yVector;
+        const angle = this.calculateAngle(userPoseVectorPart, coachPoseVectorPart);
+        return (angle < 1.08 && angle > 0.92)
+      }
+
+    /**
+    * Calculate the angle between two vectors 
+    * @param vector_1 vector of the user 
+    * @param vector_2 vector of the coach
+    * @returns the angle between the two coaches
+    */
+    private calculateAngle(vector_1: any, vector_2: any){
+        const xVector1 = vector_1.xVector;
+        const yVector1 = vector_1.yVector;
+        const xVector2 = vector_2.xVector;
+        const yVector2 = vector_2.yVector;
         const lengthVector1 = (Math.sqrt((yVector1 * yVector1) + (xVector1 * xVector1)));
         const lengthVector2 = (Math.sqrt((yVector2 * yVector2) + (xVector2 * xVector2)));
         
         const angle = (((yVector1 * yVector2) + (xVector1 * xVector2))/(lengthVector1 * lengthVector2));
-        console.log(angle);
-        if(angle < 1.08 && angle > 0.92) {
-            arePoseSame = true;
-        } else {
-            arePoseSame = false;
-        }
-        return arePoseSame;
-      }
+        return angle;
+    }
 }
 
