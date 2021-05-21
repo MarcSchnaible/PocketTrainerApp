@@ -1,9 +1,20 @@
 <ion-content>
   <div id="cameraPreview" class="cameraPreview">
-    <div *ngIf="cameraActive">
-      <ion-button [style]="cssProbertyCloseButton" (click)="stopCamera()" id="close">
-        <ion-icon name="close-outline"></ion-icon>
-      </ion-button>
+    <div class="header">
+      <ion-segment class="segment" mode="ios" value="lernModus" (ionChange)="onModeUpdate($event.detail.value)">
+        <ion-segment-button class="segmentButton" value="lernModus">
+          <p class="text">lernen</p>
+        </ion-segment-button>
+        <ion-segment-button class="segmentButton"  value="trainModus">
+          <p class="text">trainieren</p>
+        </ion-segment-button>
+      </ion-segment>
+      <ion-icon (click)="stopCamera()" name="close-outline" class="closeButton"></ion-icon>
+      <!--
+        <ion-button [style]="cssProbertyCloseButton" (click)="stopCamera()" id="close">
+          <ion-icon name="close-outline"></ion-icon>
+        </ion-button>
+      -->
     </div>
   </div>
 
