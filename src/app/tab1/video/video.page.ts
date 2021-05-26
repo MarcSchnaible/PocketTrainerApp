@@ -3,7 +3,7 @@ import { Plugins } from "@capacitor/core"
 const { CameraPreview } = Plugins;
 import { CameraPreviewOptions, CameraPreviewPictureOptions } from '@capacitor-community/camera-preview';
 import * as posenet from '@tensorflow-models/posenet';
-import {drawKeypoints, drawSkeleton, setColorFalse, setColorTrue} from '../drawing.service';
+import {drawHead, drawKeypoints, drawSkeleton, setColorFalse, setColorTrue} from '../drawing.service';
 import '@capacitor-community/camera-preview';
 import { ActivatedRoute, Router } from '@angular/router';
 import { ScreenOrientation } from '@ionic-native/screen-orientation/ngx';
@@ -27,6 +27,7 @@ export class VideoPage implements OnInit{
   orientation: string;
   video: string;
   durchlauf = 1;
+  positionCorrect = false;
 
   @ViewChild('canvas', { static: true }) canvas: ElementRef<HTMLCanvasElement>;
 
@@ -136,6 +137,12 @@ export class VideoPage implements OnInit{
       flipHorizontal: false
     });
 
+    if(pose["keypoints"][0]["score"] >= 0.5 && pose["keypoints"][15]["score"] >= 0.5 && pose["keypoints"][16]["score"] >= 0.5) {
+      this.positionCorrect = true;
+    } else {
+      this.positionCorrect = false;
+    }
+
     let userPose = pose;
     if(this.durchlauf == 1){
       let coachPose = this.dataServiceSquad.getPose(1);
@@ -176,8 +183,10 @@ export class VideoPage implements OnInit{
     ctx.canvas.width = imageWidth;
     ctx.canvas.height = imageHeight;
 
-    drawKeypoints(pose["keypoints"], 0.6, ctx);
-    drawSkeleton(pose["keypoints"], 0.7, ctx);
+    //drawKeypoints(pose["keypoints"], 0.6, ctx);
+    //drawSkeleton(pose["keypoints"], 0.7, ctx);
+    drawHead(pose, ctx);
+    console.log(pose);
   }
 
   //stop the cameraPreview

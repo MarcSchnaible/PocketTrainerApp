@@ -117,6 +117,218 @@
          scale, ctx);
    });
  }
+
+ export function drawHead(pose, ctx) {
+  const leftShoulderX = pose["keypoints"][6]["position"]["x"];
+  const leftShoulderY = pose["keypoints"][6]["position"]["y"];
+  const rightShoulderX = pose["keypoints"][5]["position"]["x"];
+  const rightShoulderY = pose["keypoints"][5]["position"]["y"];
+  const leftEarX = pose["keypoints"][4]["position"]["x"];
+  const leftEarY = pose["keypoints"][4]["position"]["y"];
+  const rightEarX = pose["keypoints"][3]["position"]["x"];
+  const rightEarY = pose["keypoints"][3]["position"]["y"];
+  const noseX = pose["keypoints"][0]["position"]["x"];
+  const noseY = pose["keypoints"][0]["position"]["y"];
+  const leftEyeX = pose["keypoints"][2]["position"]["x"];
+  const leftEyeY = pose["keypoints"][2]["position"]["y"];
+  const rightEyeX = pose["keypoints"][1]["position"]["x"];
+  const rightEyeY = pose["keypoints"][1]["position"]["y"];
+  const rightHuefteX = pose["keypoints"][11]["position"]["x"];
+  const rightHuefteY = pose["keypoints"][11]["position"]["y"];
+  const leftHuefteX = pose["keypoints"][12]["position"]["x"];
+  const leftHuefteY = pose["keypoints"][12]["position"]["y"];
+  const leftEllbowX = pose["keypoints"][8]["position"]["x"];
+  const leftEllbowY = pose["keypoints"][8]["position"]["y"];
+  const leftHandX = pose["keypoints"][10]["position"]["x"];
+  const leftHandY = pose["keypoints"][10]["position"]["y"];
+  const rightEllbowX = pose["keypoints"][7]["position"]["x"];
+  const rightEllbowY = pose["keypoints"][7]["position"]["y"];
+  const rightHandX = pose["keypoints"][9]["position"]["x"];
+  const rightHandY = pose["keypoints"][9]["position"]["y"];
+  const leftKneeX = pose["keypoints"][14]["position"]["x"];
+  const leftKneeY = pose["keypoints"][14]["position"]["y"];
+  const leftFootX = pose["keypoints"][16]["position"]["x"];
+  const leftFootY = pose["keypoints"][16]["position"]["y"];
+  const rightKneeX = pose["keypoints"][13]["position"]["x"];
+  const rightKneeY = pose["keypoints"][13]["position"]["y"];
+  const rightFootX = pose["keypoints"][15]["position"]["x"];
+  const rightFootY = pose["keypoints"][15]["position"]["y"];
+
+  const augenAbstandX = rightEyeX - leftEyeX;
+  const augenAbstandY = rightEyeY - leftEyeY;
+  const linienStaerke = Math.sqrt( augenAbstandX * augenAbstandX + augenAbstandY * augenAbstandY)
+
+  const accuracy = 0.75;
+  const accuracyHead = 0.60;
+
+  //head
+  if(pose["keypoints"][5]["score"] >= accuracyHead && pose["keypoints"][6]["score"] >= accuracyHead && pose["keypoints"][3]["score"] >= accuracyHead && pose["keypoints"][4]["score"] >= accuracyHead && pose["keypoints"][1]["score"] >= accuracyHead && pose["keypoints"][2]["score"] >= accuracyHead && pose["keypoints"][0]["score"] >= accuracyHead) {
+    const startY = (((leftShoulderY+rightShoulderY)/2) + ((((leftEarY+rightEarY)/2) + ((leftShoulderY+rightShoulderY)/2))/2))/2;
+    const startX = (leftEarX+rightEarX)/2;
+    ctx.fillStyle = "rgba(128, 128, 128, 0.603)";
+
+    ctx.beginPath();
+    ctx.moveTo(startX, startY);
+    ctx.quadraticCurveTo(leftEarX, startY, leftEarX, leftEarY);
+    ctx.arc(noseX,noseY,(noseX-leftEarX),Math.PI,0,false);
+    ctx.quadraticCurveTo(rightEarX, startY, startX, startY);
+    ctx.closePath();
+    ctx.fill();
+  }
+
+  //body
+  if(pose["keypoints"][6]["score"] >= accuracy && pose["keypoints"][5]["score"] >= accuracy && pose["keypoints"][11]["score"] >= accuracy && pose["keypoints"][12]["score"] >= accuracy) {
+    ctx.fillStyle = "rgba(128, 128, 128, 0.603)";
+    ctx.beginPath();
+    ctx.moveTo(leftShoulderX, leftShoulderY - 5);
+    ctx.lineTo(rightShoulderX, rightShoulderY - 5);
+    ctx.quadraticCurveTo(rightShoulderX + 5, rightShoulderY - 5, rightShoulderX + 5, rightShoulderY);
+    ctx.lineTo(rightHuefteX + 5, rightHuefteY);
+    ctx.quadraticCurveTo(rightHuefteX + 5, rightHuefteY + 25, rightHuefteX, rightHuefteY + 5);
+    ctx.lineTo(leftHuefteX, leftHuefteY - 5);
+    ctx.quadraticCurveTo(leftHuefteX - 5, leftHuefteY + 5, leftHuefteX - 5, leftHuefteY);
+    ctx.lineTo(leftShoulderX - 5, leftShoulderY);
+    ctx.quadraticCurveTo(leftShoulderX - 5, leftShoulderY - 5, leftShoulderX, leftShoulderY - 5)
+    ctx.closePath();
+    ctx.fill();
+  }
+
+  //left arm
+  if (pose["keypoints"][6]["score"] >= accuracy && pose["keypoints"][8]["score"] >= accuracy) {
+    ctx.beginPath();
+    ctx.arc(leftShoulderX, leftShoulderY, (linienStaerke)/2, 0, 4 * Math.PI);
+    ctx.fillStyle = "rgba(128, 128, 128, 0.603)";
+    ctx.fill();
+
+    ctx.beginPath();
+    ctx.moveTo(leftShoulderX, leftShoulderY);
+    ctx.lineTo(leftEllbowX, leftEllbowY);
+    ctx.lineWidth = linienStaerke;
+    ctx.strokeStyle = "rgba(128, 128, 128, 0.603)";
+    ctx.stroke();
+
+    ctx.beginPath();
+    ctx.arc(leftEllbowX, leftEllbowY, (linienStaerke)/2, 0, 4 * Math.PI);
+    ctx.fillStyle = "rgba(128, 128, 128, 0.603)";
+    ctx.fill();
+  }
+
+  if(pose["keypoints"][10]["score"] >= accuracy && pose["keypoints"][8]["score"] >= accuracy) {
+    ctx.beginPath();
+    ctx.moveTo(leftEllbowX, leftEllbowY);
+    ctx.lineTo(leftHandX, leftHandY);
+    ctx.lineWidth = linienStaerke;
+    ctx.strokeStyle = "rgba(128, 128, 128, 0.603)";
+    ctx.stroke();
+
+    ctx.beginPath();
+    ctx.arc(leftHandX, leftHandY, (linienStaerke)/2, 0, 4 * Math.PI);
+    ctx.fillStyle = "rgba(128, 128, 128, 0.603)";
+    ctx.fill();
+  }
+
+  //right arm
+  if(pose["keypoints"][5]["score"] >= accuracy && pose["keypoints"][7]["score"] >= accuracy) {
+    ctx.beginPath();
+    ctx.arc(rightShoulderX, rightShoulderY, (linienStaerke)/2, 0, 4 * Math.PI);
+    ctx.fillStyle = "rgba(128, 128, 128, 0.603)";
+    ctx.fill();
+
+    ctx.beginPath();
+    ctx.moveTo(rightShoulderX, rightShoulderY);
+    ctx.lineTo(rightEllbowX, rightEllbowY);
+    ctx.lineWidth = linienStaerke;
+    ctx.strokeStyle = "rgba(128, 128, 128, 0.603)";
+    ctx.stroke();
+
+    ctx.beginPath();
+    ctx.arc(rightEllbowX, rightEllbowY, (linienStaerke)/2, 0, 4 * Math.PI);
+    ctx.fillStyle = "rgba(128, 128, 128, 0.603)";
+    ctx.fill();
+  }
+
+  if(pose["keypoints"][9]["score"] >= accuracy && pose["keypoints"][7]["score"] >= accuracy) {
+    ctx.beginPath();
+    ctx.moveTo(rightEllbowX, rightEllbowY);
+    ctx.lineTo(rightHandX, rightHandY);
+    ctx.lineWidth = linienStaerke;
+    ctx.strokeStyle = "rgba(128, 128, 128, 0.603)";
+    ctx.stroke();
+
+    ctx.beginPath();
+    ctx.arc(rightHandX, rightHandY, (linienStaerke)/2, 0, 4 * Math.PI);
+    ctx.fillStyle = "rgba(128, 128, 128, 0.603)";
+    ctx.fill();
+  }
+
+  //leftLeg
+  if(pose["keypoints"][12]["score"] >= accuracy && pose["keypoints"][14]["score"] >= accuracy) {
+    ctx.beginPath();
+    ctx.arc(leftHuefteX, leftHuefteY, (linienStaerke)/2, 0, 4 * Math.PI);
+    ctx.fillStyle = "rgba(128, 128, 128, 0.603)";
+    ctx.fill();
+
+    ctx.beginPath();
+    ctx.moveTo(leftHuefteX, leftHuefteY);
+    ctx.lineTo(leftKneeX, leftKneeY);
+    ctx.lineWidth = linienStaerke;
+    ctx.strokeStyle = "rgba(128, 128, 128, 0.603)";
+    ctx.stroke();
+
+    ctx.beginPath();
+    ctx.arc(leftKneeX, leftKneeY, (linienStaerke)/2, 0, 4 * Math.PI);
+    ctx.fillStyle = "rgba(128, 128, 128, 0.603)";
+    ctx.fill();
+  }
+
+  if(pose["keypoints"][14]["score"] >= accuracy && pose["keypoints"][16]["score"] >= accuracy) {
+    ctx.beginPath();
+    ctx.moveTo(leftKneeX, leftKneeY);
+    ctx.lineTo(leftFootX, leftFootY);
+    ctx.lineWidth = linienStaerke;
+    ctx.strokeStyle = "rgba(128, 128, 128, 0.603)";
+    ctx.stroke();
+
+    ctx.beginPath();
+    ctx.arc(leftFootX, leftFootY, (linienStaerke)/2, 0, 4 * Math.PI);
+    ctx.fillStyle = "rgba(128, 128, 128, 0.603)";
+    ctx.fill();
+  }
+
+  //right leg
+  if(pose["keypoints"][11]["score"] >= accuracy && pose["keypoints"][13]["score"] >= accuracy) {
+    ctx.beginPath();
+    ctx.arc(rightHuefteX, rightHuefteY, (linienStaerke)/2, 0, 4 * Math.PI);
+    ctx.fillStyle = "rgba(128, 128, 128, 0.603)";
+    ctx.fill();
+    
+    ctx.beginPath();
+    ctx.moveTo(rightHuefteX, rightHuefteY);
+    ctx.lineTo(rightKneeX, rightKneeY);
+    ctx.lineWidth = linienStaerke;
+    ctx.strokeStyle = "rgba(128, 128, 128, 0.603)";
+    ctx.stroke();
+
+    ctx.beginPath();
+    ctx.arc(rightKneeX, rightKneeY, (linienStaerke)/2, 0, 4 * Math.PI);
+    ctx.fillStyle = "rgba(128, 128, 128, 0.603)";
+    ctx.fill();
+  }
+
+  if (pose["keypoints"][13]["score"] >= accuracy && pose["keypoints"][15]["score"] >= accuracy) {
+    ctx.beginPath();
+    ctx.moveTo(rightKneeX, rightKneeY);
+    ctx.lineTo(rightFootX, rightFootY);
+    ctx.lineWidth = linienStaerke;
+    ctx.strokeStyle = "rgba(128, 128, 128, 0.603)";
+    ctx.stroke();
+
+    ctx.beginPath();
+    ctx.arc(rightFootX, rightFootY, (linienStaerke)/2, 0, 4 * Math.PI);
+    ctx.fillStyle = "rgba(128, 128, 128, 0.603)";
+    ctx.fill();
+  }
+}
  
  /**
   * Draw pose keypoints onto a canvas

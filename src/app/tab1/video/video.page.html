@@ -26,5 +26,6 @@
   </video>
 
   <div class="blackBackground" *ngIf="cameraActive"></div>
-  <h2 class="dialog">Bitte nehme die Position deines Trainers ein</h2>
+  <h2 class="dialog" *ngIf="positionCorrect">Bitte nehme die Position deines Trainers ein</h2>
+  <h2 class="dialog" *ngIf="!positionCorrect">Bitte vergrößern Sie den Abstand zur Kamera</h2>
 </ion-content>
