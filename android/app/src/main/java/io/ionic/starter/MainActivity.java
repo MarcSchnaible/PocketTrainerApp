@@ -5,6 +5,7 @@ import android.os.Bundle;
 import com.getcapacitor.BridgeActivity;
 import com.getcapacitor.Plugin;
 import com.ahm.capacitor.camera.preview.CameraPreview;
+import com.getcapacitor.community.audio.nativeaudio.NativeAudio;
 
 import java.util.ArrayList;
 
@@ -18,6 +19,7 @@ public class MainActivity extends BridgeActivity {
       // Additional plugins you've installed go here
       // Ex: add(TotallyAwesomePlugin.class);
       add(CameraPreview.class);
+      add(NativeAudio.class);
     }});
   }
 }

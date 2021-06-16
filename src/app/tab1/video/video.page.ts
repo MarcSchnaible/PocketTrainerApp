@@ -3,7 +3,7 @@ import { Plugins } from "@capacitor/core"
 const { CameraPreview } = Plugins;
 import { CameraPreviewOptions, CameraPreviewPictureOptions } from '@capacitor-community/camera-preview';
 import * as posenet from '@tensorflow-models/posenet';
-import {drawHead, drawKeypoints, drawSkeleton, setColorFalse, setColorTrue} from '../drawing.service';
+import {drawbody, drawKeypoints, drawLeftArm, drawLeftLeg, drawRightArm, drawRightLeg, drawSkeleton, setColorFalse, setColorTrue} from '../drawing.service';
 import '@capacitor-community/camera-preview';
 import { ActivatedRoute, Router } from '@angular/router';
 import { ScreenOrientation } from '@ionic-native/screen-orientation/ngx';
@@ -26,8 +26,10 @@ export class VideoPage implements OnInit{
   videoSource: string;
   orientation: string;
   video: string;
-  durchlauf = 1;
+  coachPose: any;
+  counterPose = 1;
   positionCorrect = false;
+  mode = "lernModus";
 
   @ViewChild('canvas', { static: true }) canvas: ElementRef<HTMLCanvasElement>;
 
@@ -57,10 +59,11 @@ export class VideoPage implements OnInit{
     this.loadModel();
     this.setCssProberty();
     this.openCamera();
+    /*
     setTimeout(() => {
       let vid = <HTMLVideoElement>document.getElementById("myVideo");
       vid.pause();
-    }, 1500);
+    }, 1500);*/
   }
 
   setCssProberty(){
@@ -92,7 +95,7 @@ export class VideoPage implements OnInit{
       architecture: 'MobileNetV1',
       outputStride: 16,
       inputResolution: { width: 257, height: 200},
-      multiplier: 0.5
+      multiplier: 0.75
     });
   }
 
@@ -137,12 +140,72 @@ export class VideoPage implements OnInit{
       flipHorizontal: false
     });
 
+    var video = <HTMLVideoElement>document.getElementById('myVideo');
+    video.height = window.innerHeight;
+    const poseVideo = await this.model.estimateSinglePose(video, {
+      flipHorizontal: false
+    });
+
     if(pose["keypoints"][0]["score"] >= 0.5 && pose["keypoints"][15]["score"] >= 0.5 && pose["keypoints"][16]["score"] >= 0.5) {
       this.positionCorrect = true;
     } else {
       this.positionCorrect = false;
     }
 
+    if (this.mode == "lernModus") {
+      this.learning(pose, poseVideo);
+    } else if(this.mode == "trainModus") {
+      this.training(pose, poseVideo)
+    }
+  }
+
+  training(pose, poseVideo) {
+    let vid = <HTMLVideoElement>document.getElementById("myVideo");
+    vid.play();
+
+    const imageWidth = document.getElementById('image').clientWidth;
+    const imageHeight = document.getElementById('image').clientHeight;
+
+    this.drawCanvas(pose, this.image, imageWidth, imageHeight, true, true, true, true);
+  }
+
+  learning(pose, poseVideo) {
+    this.coachPose = this.dataServiceSquad.getPose(this.counterPose);
+    let compareService = new CompareService(this.coachPose, poseVideo);
+    if (this.counterPose == 1) {
+      if (compareService.compareCompleteBody()) {
+        let vid = <HTMLVideoElement>document.getElementById("myVideo");
+        vid.pause();
+      }
+    } else {
+      if (compareService.compareLegs()) {
+        let vid = <HTMLVideoElement>document.getElementById("myVideo");
+        vid.pause();
+      }
+    }
+    let vid = <HTMLVideoElement>document.getElementById("myVideo");
+    if (vid.paused) {
+      let compareService2 = new CompareService(pose, this.coachPose);
+      if (compareService2.compareLegs()) {
+        let vid = <HTMLVideoElement>document.getElementById("myVideo");
+        vid.play();
+        if(this.counterPose == 2){
+          this.counterPose = 1;
+        } else {
+          this.counterPose = 2;
+        }
+      }
+    }
+
+    let compareService2 = new CompareService(pose, this.coachPose);
+
+    const imageWidth = document.getElementById('image').clientWidth;
+    const imageHeight = document.getElementById('image').clientHeight;
+
+    this.drawCanvas(pose, this.image, imageWidth, imageHeight, compareService2.compareRightArm(), compareService2.compareLeftArm(), compareService2.compareLeftLeg(), compareService2.compareRightLeg());
+    
+
+    /*
     let userPose = pose;
     if(this.durchlauf == 1){
       let coachPose = this.dataServiceSquad.getPose(1);
@@ -168,14 +231,15 @@ export class VideoPage implements OnInit{
       }
     }
 
-    const imageWidth = document.getElementById('image').clientWidth;
-    const imageHeight = document.getElementById('image').clientHeight;
+    */
+  }
 
-    this.drawCanvas(pose, this.image, imageWidth, imageHeight);
+  onModeUpdate(mode: string){
+    this.mode = mode;
   }
 
   //draw Canvas
-  drawCanvas(pose, image, imageWidth, imageHeight) {
+  drawCanvas(pose, image, imageWidth, imageHeight, rightArm, leftArm, leftLeg, rightLeg) {
     //const ctx = this.canvas.nativeElement.getContext('2d');
     var canvas = <HTMLCanvasElement> document.getElementById("canvas");
     var ctx = canvas.getContext("2d");
@@ -183,10 +247,27 @@ export class VideoPage implements OnInit{
     ctx.canvas.width = imageWidth;
     ctx.canvas.height = imageHeight;
 
-    //drawKeypoints(pose["keypoints"], 0.6, ctx);
-    //drawSkeleton(pose["keypoints"], 0.7, ctx);
-    drawHead(pose, ctx);
-    console.log(pose);
+    drawbody(pose, ctx);
+    if (rightArm) {
+      drawRightArm(pose, ctx, "rgba(128, 128, 128, 0.603)")
+    } else {
+      drawRightArm(pose, ctx, "rgba(236, 17, 17, 0.603)")
+    }
+    if (leftArm) {
+      drawLeftArm(pose, ctx, "rgba(128, 128, 128, 0.603)")
+    } else {
+      drawLeftArm(pose, ctx, "rgba(236, 17, 17, 0.603)")
+    }
+    if (leftLeg) {
+      drawLeftLeg(pose, ctx, "rgba(128, 128, 128, 0.603)")
+    } else {
+      drawLeftLeg(pose, ctx, "rgba(236, 17, 17, 0.603)")
+    }
+    if (rightLeg) {
+      drawRightLeg(pose, ctx, "rgba(128, 128, 128, 0.603)")
+    } else {
+      drawRightLeg(pose, ctx, "rgba(236, 17, 17, 0.603)")
+    }
   }
 
   //stop the cameraPreview

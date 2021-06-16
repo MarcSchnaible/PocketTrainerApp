@@ -24,6 +24,7 @@
   <video autoplay muted loop id="myVideo" *ngIf="cameraActive" webkit-playsinline playsinline>
     <source src="{{videoSource}}" type="video/mp4">
   </video>
+  <canvas id="canvasVideo"></canvas>
 
   <div class="blackBackground" *ngIf="cameraActive"></div>
   <h2 class="dialog" *ngIf="positionCorrect">Bitte nehme die Position deines Trainers ein</h2>
